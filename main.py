@@ -111,9 +111,13 @@ while True:
     Mask = cv2.morphologyEx(Mask, cv2.MORPH_OPEN, kernel)
     Mask = cv2.dilate(Mask, kernel, iterations=1)
 
-    # Find contours for the pointer after
-    # identifying it
-    _,cnts,_ = cv2.findContours(Mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # Find contours for the pointer after identifying it
+    try:
+        # Try the newer OpenCV signature first (returns 2 values)
+        cnts, _ = cv2.findContours(Mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    except ValueError:
+        # Fall back to older OpenCV signature (returns 3 values)
+        _, cnts, _ = cv2.findContours(Mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     center = None
 
     # If the contours are formed
